@@ -5,12 +5,21 @@ A simple packet sniffer for FFXIV.
 `aethersight [-f <filename>] [-d <network device name>]`
 
 ## Library Usage
-Aethersight exposes two methods.
+Aethersight exposes the following interface:
 
 ```c++
-void BeginSniffing(PacketCallback callback, std::string deviceName = "");
+class AethersightSniffer {
+    AethersightSniffer();
 
-void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
+    void BeginSniffing(PacketCallback callback, std::string deviceName = "");
+    void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
+    void EndSniffing();
+    void EndSniffingFromFile();
+}
+
+extern "C" __declspec(dllexport) AethersightSniffer* CreateAethersightSniffer();
+
+extern "C" __declspec(dllexport) void DisposeAethersightSniffer(AethersightSniffer* sniffer);
 ```
 
 `PacketCallback` is a typedef for the following call signature:

@@ -9,6 +9,7 @@ add_compile_definitions(TINS_STATIC)
 set(src include/Sapphire/Network/CommonNetwork.h src/Decompress.h src/Decompress.cpp include/Aethersight/Aethersight.h src/Aethersight.cpp)
 add_library(aethersight ${src})
 add_executable(aethersight-cli src/main.cpp)
+set_target_properties(aethersight PROPERTIES OUTPUT_NAME libaethersight)
 set_target_properties(aethersight-cli PROPERTIES OUTPUT_NAME aethersight)
 
 # Define include directory

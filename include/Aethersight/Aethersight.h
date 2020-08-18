@@ -2,6 +2,7 @@
 #define AETHERSIGHT_AETHERSIGHT_H
 
 #include <iostream>
+#include <tins/tins.h>
 
 #include "Sapphire/Network/CommonNetwork.h"
 
@@ -12,8 +13,26 @@ typedef void PacketCallback (std::string,
                              const Sapphire::Network::Packets::FFXIVARR_IPC_HEADER*,
                              const std::vector<uint8_t>*);
 
-void BeginSniffing(PacketCallback callback, std::string deviceName = "");
+class AethersightSniffer {
+public:
+    AethersightSniffer();
 
-void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
+    void BeginSniffing(PacketCallback callback, std::string deviceName = "");
+    void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
+    void EndSniffing();
+    void EndSniffingFromFile();
+private:
+    // Filter copied from Zanarkand
+    const std::string PACKET_FILTER = "tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551";
+
+    Tins::Sniffer* sniffer;
+    Tins::FileSniffer* fileSniffer;
+
+    bool Process(const Tins::Packet& packet, PacketCallback callback);
+};
+
+extern "C" __declspec(dllexport) AethersightSniffer* CreateAethersightSniffer();
+
+extern "C" __declspec(dllexport) void DisposeAethersightSniffer(AethersightSniffer* sniffer);
 
 #endif //AETHERSIGHT_AETHERSIGHT_H

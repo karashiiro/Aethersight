@@ -39,7 +39,7 @@ void OnPacket(std::string srcAddress,
     std::cout << "target_actor=" << segmentHeader.target_actor << ";";
     std::cout << "segment_type=" << segmentHeader.type << ";";
 
-    if (ipcHeader != nullptr) {
+    if (ipcHeader) {
         std::cout << "ipc_type=" << ipcHeader->type << ";";
         std::cout << "server_id=" << ipcHeader->serverId << ";";
         std::cout << "ipc_timestamp=" << ipcHeader->timestamp << ";";
@@ -63,13 +63,14 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (file == nullptr) {
-        if (device == nullptr) {
-            BeginSniffing(OnPacket);
+    AethersightSniffer sniffer;
+    if (!file) {
+        if (!device) {
+            sniffer.BeginSniffing(OnPacket);
         } else {
-            BeginSniffing(OnPacket, *device);
+            sniffer.BeginSniffing(OnPacket, *device);
         }
     } else {
-        BeginSniffingFromFile(OnPacket, *file);
+        sniffer.BeginSniffingFromFile(OnPacket, *file);
     }
 }

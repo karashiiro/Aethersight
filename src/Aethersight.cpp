@@ -1,15 +1,14 @@
 #include "Aethersight/Aethersight.h"
-#include <tins/tins.h>
+
 #include <pcap.h>
 #include "Decompress.h"
 
 using namespace Sapphire::Network::Packets;
 using namespace Tins;
 
-// Copied from Zanarkand
-const std::string packetFilter("tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551");
+AethersightSniffer::AethersightSniffer() {}
 
-bool Process(const Packet& packet, PacketCallback callback) {
+bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) {
     const auto& ip = packet.pdu()->rfind_pdu<IP>();
     const auto& tcp = packet.pdu()->rfind_pdu<TCP>();
 
@@ -17,7 +16,7 @@ bool Process(const Packet& packet, PacketCallback callback) {
     std::string dstAddress(ip.dst_addr().to_string() + ':' + std::to_string(tcp.dport()));
 
     const auto& raw = tcp.find_pdu<RawPDU>();
-    if (raw == nullptr) return true;
+    if (!raw) return true;
 
     const auto payload = raw->payload();
 
@@ -48,10 +47,10 @@ bool Process(const Packet& packet, PacketCallback callback) {
     return true;
 }
 
-void BeginSniffing(PacketCallback callback, std::string deviceName) {
+void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string deviceName) {
     SnifferConfiguration config;
     config.set_promisc_mode(true);
-    config.set_filter(packetFilter);
+    config.set_filter(PACKET_FILTER);
     config.set_buffer_size(16384);
     config.set_immediate_mode(true);
 
@@ -71,10 +70,39 @@ void BeginSniffing(PacketCallback callback, std::string deviceName) {
     });
 }
 
-void BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
-    FileSniffer sniffer(fileName, packetFilter);
+void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
+    this->fileSniffer = new FileSniffer(fileName, PACKET_FILTER);
 
-    sniffer.sniff_loop([&](const Packet& packet) {
+    fileSniffer->sniff_loop([&](const Packet& packet) {
         return Process(packet, callback);
     });
+}
+
+void AethersightSniffer::EndSniffing() {
+    if (!this->sniffer) return;
+
+    this->sniffer->stop_sniff();
+    delete sniffer;
+    this->sniffer = nullptr;
+}
+
+void AethersightSniffer::EndSniffingFromFile() {
+    if (!this->fileSniffer) return;
+
+    this->fileSniffer->stop_sniff();
+    delete fileSniffer;
+    this->fileSniffer = nullptr;
+}
+
+AethersightSniffer* CreateAethersightSniffer() {
+    return new AethersightSniffer();
+}
+
+void DisposeAethersightSniffer(AethersightSniffer* sniffer) {
+    if (!sniffer) return;
+
+    sniffer->EndSniffing();
+    sniffer->EndSniffingFromFile();
+    delete sniffer;
+    sniffer = nullptr;
 }
