@@ -1,6 +1,9 @@
 # Aethersight
 A simple packet sniffer for FFXIV.
 
+## Executable Usage
+`aethersight`
+
 ## Library Usage
 Aethersight exposes two methods.
 
