@@ -51,8 +51,8 @@ void OnPacket(std::string srcAddress,
 }
 
 int main(int argc, char *argv[]) {
-    std::string* file;
-    std::string* device;
+    std::string* file = nullptr;
+    std::string* device = nullptr;
     for (int i = 0; i < argc - 1; i++) {
         std::string arg(argv[i]);
         std::string av(argv[i + 1]);
