@@ -65,7 +65,6 @@ void BeginSniffing(PacketCallback callback, std::string deviceName) {
     // SnifferConfiguration::set_immediate_mode doesn't work for some reason; do it the old way
     auto handle = sniffer.get_pcap_handle();
     pcap_setmintocopy(handle, 0);
-    pcap_set_timeout(handle, 1); // 1ms, setting this to 0 results in undefined behavior
 
     sniffer.sniff_loop([&](const Packet& packet) {
         return Process(packet, callback);
