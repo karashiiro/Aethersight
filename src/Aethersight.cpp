@@ -94,11 +94,11 @@ void AethersightSniffer::EndSniffingFromFile() {
     this->fileSniffer = nullptr;
 }
 
-AethersightSniffer* CreateAethersightSniffer() {
+DllExport AethersightSniffer* CreateAethersightSniffer() {
     return new AethersightSniffer();
 }
 
-void DisposeAethersightSniffer(AethersightSniffer* sniffer) {
+DllExport void DisposeAethersightSniffer(AethersightSniffer* sniffer) {
     if (!sniffer) return;
 
     sniffer->EndSniffing();

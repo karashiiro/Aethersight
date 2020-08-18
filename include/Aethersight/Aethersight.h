@@ -6,6 +6,8 @@
 
 #include "Sapphire/Network/CommonNetwork.h"
 
+#define DllExport __declspec( dllexport )
+
 typedef void PacketCallback (std::string,
                              std::string,
                              Sapphire::Network::Packets::FFXIVARR_PACKET_HEADER,
@@ -31,8 +33,8 @@ private:
     bool Process(const Tins::Packet& packet, PacketCallback callback);
 };
 
-extern "C" __declspec(dllexport) AethersightSniffer* CreateAethersightSniffer();
+extern "C" DllExport AethersightSniffer* CreateAethersightSniffer();
 
-extern "C" __declspec(dllexport) void DisposeAethersightSniffer(AethersightSniffer* sniffer);
+extern "C" DllExport void DisposeAethersightSniffer(AethersightSniffer* sniffer);
 
 #endif //AETHERSIGHT_AETHERSIGHT_H
