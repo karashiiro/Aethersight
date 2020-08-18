@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "CommonNetwork.h"
+#include "Sapphire/Network/CommonNetwork.h"
 
 typedef void PacketCallback (std::string,
                              std::string,

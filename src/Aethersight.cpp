@@ -1,4 +1,4 @@
-#include "Aethersight.h"
+#include "Aethersight/Aethersight.h"
 #include <tins/tins.h>
 #include "Decompress.h"
 

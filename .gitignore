@@ -2,5 +2,7 @@
 
 cmake-build*/
 
-include/
+include/pcap
+include/tins
+include/*.h
 lib/

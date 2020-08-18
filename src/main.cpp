@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "Aethersight.h"
+#include "Aethersight/Aethersight.h"
 
 using namespace Sapphire::Network::Packets;
 

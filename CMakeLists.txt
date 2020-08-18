@@ -6,7 +6,7 @@ add_compile_definitions(DLIBTINS_ENABLE_CXX11)
 add_compile_definitions(TINS_STATIC)
 
 # Define library target
-set(src src/CommonNetwork.h src/Decompress.h src/Decompress.cpp src/Aethersight.h src/Aethersight.cpp)
+set(src include/Sapphire/Network/CommonNetwork.h src/Decompress.h src/Decompress.cpp include/Aethersight/Aethersight.h src/Aethersight.cpp)
 add_library(aethersight ${src})
 add_executable(aethersight-cli src/main.cpp)
 
