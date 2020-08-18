@@ -2,7 +2,7 @@
 A simple packet sniffer for FFXIV.
 
 ## Executable Usage
-`aethersight`
+`aethersight [-f <filename>] [-d <network device name>]`
 
 ## Library Usage
 Aethersight exposes two methods.
@@ -10,7 +10,7 @@ Aethersight exposes two methods.
 ```c++
 void BeginSniffing(PacketCallback callback, std::string deviceName = "");
 
-void BeginSniffingFromFile(PacketCallback callback, std::string fileName = "");
+void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
 ```
 
 `PacketCallback` is a typedef for the following call signature:

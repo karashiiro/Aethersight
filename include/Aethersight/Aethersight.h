@@ -14,6 +14,6 @@ typedef void PacketCallback (std::string,
 
 void BeginSniffing(PacketCallback callback, std::string deviceName = "");
 
-void BeginSniffingFromFile(PacketCallback callback, std::string fileName = "");
+void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
 
 #endif //AETHERSIGHT_AETHERSIGHT_H
