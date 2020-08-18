@@ -5,6 +5,7 @@
 using namespace Sapphire::Network::Packets;
 using namespace Tins;
 
+// Copied from Zanarkand
 const std::string packetFilter("tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551");
 
 bool Process(const Packet& packet, PacketCallback callback) {
