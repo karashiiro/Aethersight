@@ -11,7 +11,7 @@ lib/
 include/
  - pcap/
  - tins/
- - other libtins and/or WinPCap headers
+ - other libtins and WinPCap headers
  - zconf.h
  - zlib.h
 ```
