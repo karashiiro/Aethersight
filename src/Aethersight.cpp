@@ -5,6 +5,8 @@
 using namespace Sapphire::Network::Packets;
 using namespace Tins;
 
+const std::string packetFilter("tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551");
+
 bool Process(const Packet& packet, PacketCallback callback) {
     const auto& ip = packet.pdu()->rfind_pdu<IP>();
     const auto& tcp = packet.pdu()->rfind_pdu<TCP>();
@@ -44,34 +46,29 @@ bool Process(const Packet& packet, PacketCallback callback) {
     return true;
 }
 
-void BeginSniffing(PacketCallback callback, SnifferKind kind, std::string deviceName, std::string fileName) {
-    const std::string packetFilter("tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551");
-
+void BeginSniffing(PacketCallback callback, std::string deviceName) {
     SnifferConfiguration config;
     config.set_promisc_mode(true);
     config.set_filter(packetFilter);
     config.set_buffer_size(16384);
     config.set_immediate_mode(true);
 
-    BaseSniffer* sniffer;
-    switch (kind) {
-        case Default:
-            if (deviceName == "") {
-                auto device = NetworkInterface::default_interface();
-                deviceName = device.name();
-            }
-            sniffer = new Sniffer(deviceName, config);
-            break;
-        case File:
-            sniffer = new FileSniffer(fileName, packetFilter);
-            break;
-        default:
-            return;
+    if (deviceName == "") {
+        auto device = NetworkInterface::default_interface();
+        deviceName = device.name();
     }
 
-    sniffer->sniff_loop([&](const Packet& packet) {
+    Sniffer sniffer(deviceName, config);
+
+    sniffer.sniff_loop([&](const Packet& packet) {
         return Process(packet, callback);
     });
+}
 
-    delete sniffer;
+void BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
+    FileSniffer sniffer(fileName, packetFilter);
+
+    sniffer.sniff_loop([&](const Packet& packet) {
+        return Process(packet, callback);
+    });
 }

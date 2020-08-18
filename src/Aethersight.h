@@ -12,11 +12,8 @@ typedef void PacketCallback (std::string,
                              const Sapphire::Network::Packets::FFXIVARR_IPC_HEADER*,
                              const std::vector<uint8_t>*);
 
-enum SnifferKind {
-    Default,
-    File,
-};
+void BeginSniffing(PacketCallback callback, std::string deviceName = "");
 
-void BeginSniffing(PacketCallback callback, SnifferKind kind, std::string deviceName = "", std::string fileName = "");
+void BeginSniffingFromFile(PacketCallback callback, std::string fileName = "");
 
 #endif //AETHERSIGHT_AETHERSIGHT_H
