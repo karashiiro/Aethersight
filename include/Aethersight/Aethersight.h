@@ -15,7 +15,7 @@ typedef void PacketCallback (std::string,
                              const Sapphire::Network::Packets::FFXIVARR_IPC_HEADER*,
                              const std::vector<uint8_t>*);
 
-class AethersightSniffer {
+class DllExport AethersightSniffer {
 public:
     AethersightSniffer();
 

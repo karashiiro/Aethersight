@@ -6,7 +6,7 @@
 using namespace Sapphire::Network::Packets;
 using namespace Tins;
 
-AethersightSniffer::AethersightSniffer() {}
+AethersightSniffer::AethersightSniffer() : sniffer(nullptr), fileSniffer(nullptr) {}
 
 bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) {
     const auto& ip = packet.pdu()->rfind_pdu<IP>();

@@ -8,7 +8,7 @@ A simple packet sniffer for FFXIV.
 Aethersight exposes the following interface:
 
 ```c++
-class AethersightSniffer {
+class DllExport AethersightSniffer {
     AethersightSniffer();
 
     void BeginSniffing(PacketCallback callback, std::string deviceName = "");
@@ -17,9 +17,9 @@ class AethersightSniffer {
     void EndSniffingFromFile();
 }
 
-extern "C" __declspec(dllexport) AethersightSniffer* CreateAethersightSniffer();
+extern "C" DllExport AethersightSniffer* CreateAethersightSniffer();
 
-extern "C" __declspec(dllexport) void DisposeAethersightSniffer(AethersightSniffer* sniffer);
+extern "C" DllExport void DisposeAethersightSniffer(AethersightSniffer* sniffer);
 ```
 
 `PacketCallback` is a typedef for the following call signature:
