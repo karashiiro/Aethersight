@@ -25,6 +25,8 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     FFXIVARR_PACKET_HEADER packetHeader;
     memcpy(&packetHeader, payload.data(), sizeof(FFXIVARR_PACKET_HEADER));
 
+    if (packetHeader.unknown_0 != 16304822851840528978 && packetHeader.unknown_0 != 0) return true;
+
     std::vector<uint8_t> payloadRemainder(payload.data() + sizeof(FFXIVARR_PACKET_HEADER), payload.data() + payload.size());
     if (packetHeader.isCompressed) {
         try {
@@ -33,21 +35,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
 #if _DEBUG
             std::cout <<
             e.what() <<
-            std::endl <<
-            "Packet header data: " <<
-            "src_address=" << srcAddress << ";" <<
-            "dst_address=" << dstAddress << ";" <<
-            "unknown_0=" << packetHeader.unknown_0 << ";" <<
-            "unknown_8=" << packetHeader.unknown_8 << ";" <<
-            "timestamp=" << packetHeader.timestamp << ";" <<
-            "total_size=" << packetHeader.size << ";" <<
-            "connection_type=" << packetHeader.connectionType << ";" <<
-            "count=" << packetHeader.count << ";" <<
-            "unknown_20=" << std::to_string(packetHeader.unknown_20) << ";" <<
-            "is_compressed=" << (packetHeader.isCompressed ? "true" : "false") << ";" <<
-            "unknown_24=" << packetHeader.unknown_24 << ";" <<
             std::endl;
-            throw;
 #endif
             return true;
         }

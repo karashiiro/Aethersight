@@ -41,7 +41,10 @@ std::vector<uint8_t> Decompress(std::vector<uint8_t>& input) {
 
     if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
         std::ostringstream oss;
-        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
+        oss << "Exception during zlib compression: (" << ret << ") ";
+        if (zs.msg != nullptr) {
+            oss << zs.msg;
+        }
         throw(std::runtime_error(oss.str()));
     }
 
