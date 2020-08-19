@@ -1,5 +1,5 @@
 # Aethersight
-A simple packet sniffer for FFXIV.
+A simple packet sniffer for FFXIV. Shouldn't require privilege escalation or a firewall exception on Windows.
 
 ## Executable Usage
 `aethersight [-f <filename>] [-d <network device name>]`
