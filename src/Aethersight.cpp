@@ -38,7 +38,6 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
             std::cout <<
             e.what() <<
             std::endl;
-            throw;
 #endif
             return true;
         }
