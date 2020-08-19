@@ -39,15 +39,17 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
         ipcData = std::vector<uint8_t>(payloadRemainder.data() + sizeof(FFXIVARR_PACKET_SEGMENT_HEADER) + sizeof(FFXIVARR_IPC_HEADER),
                                        payloadRemainder.data() + payloadRemainder.size());
 
-        callback(srcAddress, dstAddress, packetHeader, segmentHeader, &ipcHeader, &ipcData);
+        callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, &ipcHeader, &ipcData);
     } else {
-        callback(srcAddress, dstAddress, packetHeader, segmentHeader, nullptr, nullptr);
+        callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, nullptr, nullptr);
     }
 
     return true;
 }
 
 void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string deviceName) {
+    if (this->sniffer) return;
+
     SnifferConfiguration config;
     config.set_promisc_mode(true);
     config.set_filter(PACKET_FILTER);
@@ -59,21 +61,23 @@ void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string devi
         deviceName = device.name();
     }
 
-    Sniffer sniffer(deviceName, config);
+    this->sniffer = new Sniffer(deviceName, config);
 
     // SnifferConfiguration::set_immediate_mode doesn't work for some reason; do it the old way
-    auto handle = sniffer.get_pcap_handle();
+    auto handle = this->sniffer->get_pcap_handle();
     pcap_setmintocopy(handle, 0);
 
-    sniffer.sniff_loop([&](const Packet& packet) {
+    this->sniffer->sniff_loop([&](const Packet& packet) {
         return Process(packet, callback);
     });
 }
 
 void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
+    if (this->fileSniffer) return;
+
     this->fileSniffer = new FileSniffer(fileName, PACKET_FILTER);
 
-    fileSniffer->sniff_loop([&](const Packet& packet) {
+    this->fileSniffer->sniff_loop([&](const Packet& packet) {
         return Process(packet, callback);
     });
 }

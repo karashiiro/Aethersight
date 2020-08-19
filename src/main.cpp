@@ -17,27 +17,27 @@ std::string Vector8ToString(const std::vector<uint8_t> vec) {
 
 void OnPacket(std::string srcAddress,
               std::string dstAddress,
-              FFXIVARR_PACKET_HEADER packetHeader,
-              FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader,
+              const FFXIVARR_PACKET_HEADER* packetHeader,
+              const FFXIVARR_PACKET_SEGMENT_HEADER* segmentHeader,
               const FFXIVARR_IPC_HEADER* ipcHeader,
               const std::vector<uint8_t>* ipcData) {
     std::cout << "src_address=" << srcAddress << ";";
     std::cout << "dst_address=" << dstAddress << ";";
 
-    std::cout << "unknown_0=" << packetHeader.unknown_0 << ";";
-    std::cout << "unknown_8=" << packetHeader.unknown_8 << ";";
-    std::cout << "timestamp=" << packetHeader.timestamp << ";";
-    std::cout << "total_size=" << packetHeader.size << ";";
-    std::cout << "connection_type=" << packetHeader.connectionType << ";";
-    std::cout << "count=" << packetHeader.count << ";";
-    std::cout << "unknown_20=" << std::to_string(packetHeader.unknown_20) << ";";
-    std::cout << "is_compressed=" << (packetHeader.isCompressed ? "true" : "false") << ";";
-    std::cout << "unknown_24=" << packetHeader.unknown_24 << ";";
+    std::cout << "unknown_0=" << packetHeader->unknown_0 << ";";
+    std::cout << "unknown_8=" << packetHeader->unknown_8 << ";";
+    std::cout << "timestamp=" << packetHeader->timestamp << ";";
+    std::cout << "total_size=" << packetHeader->size << ";";
+    std::cout << "connection_type=" << packetHeader->connectionType << ";";
+    std::cout << "count=" << packetHeader->count << ";";
+    std::cout << "unknown_20=" << std::to_string(packetHeader->unknown_20) << ";";
+    std::cout << "is_compressed=" << (packetHeader->isCompressed ? "true" : "false") << ";";
+    std::cout << "unknown_24=" << packetHeader->unknown_24 << ";";
 
-    std::cout << "segment_size=" << segmentHeader.size << ";";
-    std::cout << "source_actor=" << segmentHeader.source_actor << ";";
-    std::cout << "target_actor=" << segmentHeader.target_actor << ";";
-    std::cout << "segment_type=" << segmentHeader.type << ";";
+    std::cout << "segment_size=" << segmentHeader->size << ";";
+    std::cout << "source_actor=" << segmentHeader->source_actor << ";";
+    std::cout << "target_actor=" << segmentHeader->target_actor << ";";
+    std::cout << "segment_type=" << segmentHeader->type << ";";
 
     if (ipcHeader) {
         std::cout << "ipc_type=" << ipcHeader->type << ";";

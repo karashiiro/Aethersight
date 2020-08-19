@@ -10,8 +10,8 @@
 
 typedef void PacketCallback (std::string,
                              std::string,
-                             Sapphire::Network::Packets::FFXIVARR_PACKET_HEADER,
-                             Sapphire::Network::Packets::FFXIVARR_PACKET_SEGMENT_HEADER,
+                             const Sapphire::Network::Packets::FFXIVARR_PACKET_HEADER*,
+                             const Sapphire::Network::Packets::FFXIVARR_PACKET_SEGMENT_HEADER*,
                              const Sapphire::Network::Packets::FFXIVARR_IPC_HEADER*,
                              const std::vector<uint8_t>*);
 
