@@ -6,7 +6,7 @@
 #include <vector>
 
 // Lifted from https://github.com/SapphireServer/Sapphire/blob/master/src/common/Network/CommonNetwork.h
-namespace Sapphire::Network::Packets {
+namespace Aethersight::Network {
     /**
   * Anticipated usage:
   * ==================
@@ -49,7 +49,6 @@ namespace Sapphire::Network::Packets {
     */
     struct FFXIVARR_PACKET_HEADER
     {
-        /** Unknown data, no actual use has been determined */
         uint64_t unknown_0;
         uint64_t unknown_8;
         /** Represents the number of milliseconds since epoch that the packet was sent. */
@@ -61,7 +60,6 @@ namespace Sapphire::Network::Packets {
         /** The number of packet segments that follow. */
         uint16_t count;
         uint8_t unknown_20;
-        /** Indicates if the data segments of this packet are compressed. */
         uint8_t isCompressed;
         uint32_t unknown_24;
     };

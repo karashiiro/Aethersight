@@ -1,11 +1,12 @@
 #include "Decompress.h"
 
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
 #define CHUNK 16384
 
-// Copied from https://gist.github.com/gomons/9d446024fbb7ccb6536ab984e29e154a
+// Copied from https://gist.github.com/gomons/9d446024fbb7ccb6536ab984e29e154a with slight alterations
 std::vector<uint8_t> Decompress(std::vector<uint8_t>& input) {
     z_stream zs;
     memset(&zs, 0, sizeof(zs));
@@ -28,6 +29,7 @@ std::vector<uint8_t> Decompress(std::vector<uint8_t>& input) {
         ret = inflate(&zs, 0);
 
         if (outvec.size() < zs.total_out) {
+            // Made a notable alteration to the Gist here, we don't want leftover data on the last chunk
             for (int i = 0; i < sizeof(outbuffer) - zs.avail_out; i++) {
                 outvec.push_back(outbuffer[i]);
             }
@@ -37,10 +39,9 @@ std::vector<uint8_t> Decompress(std::vector<uint8_t>& input) {
 
     inflateEnd(&zs);
 
-    if (ret != Z_STREAM_END) { // an error occurred that was not EOF
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
         std::ostringstream oss;
-        oss << "Exception during zlib decompression: (" << ret << ") "
-            << zs.msg;
+        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
         throw(std::runtime_error(oss.str()));
     }
 

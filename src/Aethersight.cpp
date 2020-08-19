@@ -1,9 +1,11 @@
 #include "Aethersight/Aethersight.h"
 
+#include <iostream>
 #include <pcap.h>
 #include "Decompress.h"
 
-using namespace Sapphire::Network::Packets;
+using namespace Aethersight;
+using namespace Aethersight::Network;
 using namespace Tins;
 
 AethersightSniffer::AethersightSniffer() : sniffer(nullptr), fileSniffer(nullptr) {}
@@ -23,9 +25,16 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     FFXIVARR_PACKET_HEADER packetHeader;
     memcpy(&packetHeader, payload.data(), sizeof(FFXIVARR_PACKET_HEADER));
 
-    auto payloadRemainder = std::vector<uint8_t>(payload.data() + sizeof(FFXIVARR_PACKET_HEADER), payload.data() + payload.size());
+    std::vector<uint8_t> payloadRemainder(payload.data() + sizeof(FFXIVARR_PACKET_HEADER), payload.data() + payload.size());
     if (packetHeader.isCompressed) {
-        payloadRemainder = Decompress(payloadRemainder);
+        try {
+            payloadRemainder = Decompress(payloadRemainder);
+        } catch (const std::exception& e) {
+#if _DEBUG
+            std::cout << e.what() << std::endl;
+#endif
+            return true;
+        }
     }
 
     FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader;

@@ -3,7 +3,8 @@
 
 #include "Aethersight/Aethersight.h"
 
-using namespace Sapphire::Network::Packets;
+using namespace Aethersight;
+using namespace Aethersight::Network;
 
 std::string Vector8ToString(const std::vector<uint8_t> vec) {
     std::string output = "";
