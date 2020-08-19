@@ -4,6 +4,10 @@
 #include <pcap.h>
 #include "Decompress.h"
 
+#define PktHeadSize sizeof(FFXIVARR_PACKET_HEADER)
+#define SegHeadSize sizeof(FFXIVARR_PACKET_SEGMENT_HEADER)
+#define IpcHeadSize sizeof(FFXIVARR_IPC_HEADER)
+
 using namespace Aethersight;
 using namespace Aethersight::Network;
 using namespace Tins;
@@ -24,8 +28,8 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     auto* remainderBegin = payload.data();
 
     FFXIVARR_PACKET_HEADER packetHeader;
-    memcpy(&packetHeader, remainderBegin, sizeof(FFXIVARR_PACKET_HEADER));
-    remainderBegin += sizeof(FFXIVARR_PACKET_HEADER);
+    memcpy(&packetHeader, remainderBegin, PktHeadSize);
+    remainderBegin += PktHeadSize;
 
     if (packetHeader.unknown_0 != 16304822851840528978 && packetHeader.unknown_0 != 0) return true;
 
@@ -44,20 +48,28 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     }
     remainderBegin = payloadRemainder.data();
 
-    FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader;
-    memcpy(&segmentHeader, payloadRemainder.data(), sizeof(FFXIVARR_PACKET_SEGMENT_HEADER));
-    remainderBegin += sizeof(FFXIVARR_PACKET_SEGMENT_HEADER);
+    // See CommonNetwork.h; several segments can be sent in one packet
+    for (int i = 0; i < packetHeader.count; i++) {
+        FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader;
+        memcpy(&segmentHeader, remainderBegin, SegHeadSize);
+        remainderBegin += SegHeadSize;
 
-    FFXIVARR_IPC_HEADER* ipcHeader = nullptr;
-    if (segmentHeader.type == FFXIVARR_SEGMENT_TYPE::SEGMENTTYPE_IPC) {
-        ipcHeader = new FFXIVARR_IPC_HEADER();
-        memcpy(ipcHeader, remainderBegin, sizeof(FFXIVARR_IPC_HEADER));
-        remainderBegin += sizeof(FFXIVARR_IPC_HEADER);
+        auto remainderSize = segmentHeader.size - SegHeadSize;
+
+        FFXIVARR_IPC_HEADER* ipcHeader = nullptr;
+        if (segmentHeader.type == FFXIVARR_SEGMENT_TYPE::SEGMENTTYPE_IPC) {
+            ipcHeader = new FFXIVARR_IPC_HEADER();
+            memcpy(ipcHeader, remainderBegin, IpcHeadSize);
+            remainderBegin += IpcHeadSize;
+            remainderSize -= IpcHeadSize;
+        }
+
+        std::vector<uint8_t> remainderData(remainderBegin, remainderBegin + remainderSize);
+        callback(srcAddress.c_str(), dstAddress.c_str(), &packetHeader, &segmentHeader, ipcHeader, &remainderData);
+        delete ipcHeader;
+
+        remainderBegin += remainderSize;
     }
-
-    std::vector<uint8_t> remainderData(remainderBegin, payloadRemainder.data() + payloadRemainder.size());
-    callback(srcAddress.c_str(), dstAddress.c_str(), &packetHeader, &segmentHeader, ipcHeader, &remainderData);
-    delete ipcHeader;
 
     return true;
 }
