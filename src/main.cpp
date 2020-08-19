@@ -21,34 +21,36 @@ void OnPacket(std::string srcAddress,
               const FFXIVARR_PACKET_HEADER* packetHeader,
               const FFXIVARR_PACKET_SEGMENT_HEADER* segmentHeader,
               const FFXIVARR_IPC_HEADER* ipcHeader,
-              const std::vector<uint8_t>* ipcData) {
-    std::cout << "src_address=" << srcAddress << ";";
-    std::cout << "dst_address=" << dstAddress << ";";
+              const std::vector<uint8_t>* remainderData) {
+    std::cout <<
+    "src_address=" << srcAddress << ";" <<
+    "dst_address=" << dstAddress << ";" <<
 
-    std::cout << "unknown_0=" << packetHeader->unknown_0 << ";";
-    std::cout << "unknown_8=" << packetHeader->unknown_8 << ";";
-    std::cout << "timestamp=" << packetHeader->timestamp << ";";
-    std::cout << "total_size=" << packetHeader->size << ";";
-    std::cout << "connection_type=" << packetHeader->connectionType << ";";
-    std::cout << "count=" << packetHeader->count << ";";
-    std::cout << "unknown_20=" << std::to_string(packetHeader->unknown_20) << ";";
-    std::cout << "is_compressed=" << (packetHeader->isCompressed ? "true" : "false") << ";";
-    std::cout << "unknown_24=" << packetHeader->unknown_24 << ";";
+    "unknown_0=" << packetHeader->unknown_0 << ";" <<
+    "unknown_8=" << packetHeader->unknown_8 << ";" <<
+    "timestamp=" << packetHeader->timestamp << ";" <<
+    "total_size=" << packetHeader->size << ";" <<
+    "connection_type=" << packetHeader->connectionType << ";" <<
+    "count=" << packetHeader->count << ";" <<
+    "unknown_20=" << std::to_string(packetHeader->unknown_20) << ";" <<
+    "is_compressed=" << (packetHeader->isCompressed ? "true" : "false") << ";" <<
+    "unknown_24=" << packetHeader->unknown_24 << ";" <<
 
-    std::cout << "segment_size=" << segmentHeader->size << ";";
-    std::cout << "source_actor=" << segmentHeader->source_actor << ";";
-    std::cout << "target_actor=" << segmentHeader->target_actor << ";";
-    std::cout << "segment_type=" << segmentHeader->type << ";";
+    "segment_size=" << segmentHeader->size << ";" <<
+    "source_actor=" << segmentHeader->source_actor << ";" <<
+    "target_actor=" << segmentHeader->target_actor << ";" <<
+    "segment_type=" << segmentHeader->type << ";";
 
     if (ipcHeader) {
-        std::cout << "ipc_type=" << ipcHeader->type << ";";
-        std::cout << "server_id=" << ipcHeader->serverId << ";";
-        std::cout << "ipc_timestamp=" << ipcHeader->timestamp << ";";
-
-        std::cout << "ipc_data=" << Vector8ToString(*ipcData) << ";";
+        std::cout <<
+        "ipc_type=" << ipcHeader->type << ";" <<
+        "server_id=" << ipcHeader->serverId << ";" <<
+        "ipc_timestamp=" << ipcHeader->timestamp << ";";
     }
 
-    std::cout << std::endl;
+    std::cout <<
+    "remainder_data=" << Vector8ToString(*remainderData) << ";"
+    << std::endl;
 }
 
 int main(int argc, char *argv[]) {
