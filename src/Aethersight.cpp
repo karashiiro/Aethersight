@@ -56,7 +56,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     }
 
     std::vector<uint8_t> remainderData(remainderBegin, payloadRemainder.data() + payloadRemainder.size());
-    callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, ipcHeader, &remainderData);
+    callback(srcAddress.c_str(), dstAddress.c_str(), &packetHeader, &segmentHeader, ipcHeader, &remainderData);
     delete ipcHeader;
 
     return true;

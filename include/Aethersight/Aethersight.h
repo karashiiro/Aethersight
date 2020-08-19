@@ -9,8 +9,8 @@
 #define DllExport __declspec( dllexport )
 
 typedef void (__stdcall* PacketCallback)(
-        std::string,
-        std::string,
+        const char*,
+        const char*,
         const Aethersight::Network::FFXIVARR_PACKET_HEADER*,
         const Aethersight::Network::FFXIVARR_PACKET_SEGMENT_HEADER*,
         const Aethersight::Network::FFXIVARR_IPC_HEADER*,

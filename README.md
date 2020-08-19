@@ -25,8 +25,8 @@ extern "C" DllExport void DisposeAethersightSniffer(AethersightSniffer* sniffer)
 `PacketCallback` is a typedef for the following call signature:
 ```c++
 typedef void (__stdcall* PacketCallback)(
-        std::string,
-        std::string,
+        const char*,
+        const char*,
         const Aethersight::Network::FFXIVARR_PACKET_HEADER*,
         const Aethersight::Network::FFXIVARR_PACKET_SEGMENT_HEADER*,
         const Aethersight::Network::FFXIVARR_IPC_HEADER*,

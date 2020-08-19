@@ -16,8 +16,8 @@ std::string Vector8ToString(const std::vector<uint8_t> vec) {
     return output;
 }
 
-void OnPacket(std::string srcAddress,
-              std::string dstAddress,
+void OnPacket(const char* srcAddress,
+              const char* dstAddress,
               const FFXIVARR_PACKET_HEADER* packetHeader,
               const FFXIVARR_PACKET_SEGMENT_HEADER* segmentHeader,
               const FFXIVARR_IPC_HEADER* ipcHeader,
