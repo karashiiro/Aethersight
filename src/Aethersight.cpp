@@ -20,14 +20,16 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     const auto& raw = tcp.find_pdu<RawPDU>();
     if (!raw) return true;
 
-    const auto payload = raw->payload();
+    auto payload = raw->payload();
+    auto* remainderBegin = payload.data();
 
     FFXIVARR_PACKET_HEADER packetHeader;
-    memcpy(&packetHeader, payload.data(), sizeof(FFXIVARR_PACKET_HEADER));
+    memcpy(&packetHeader, remainderBegin, sizeof(FFXIVARR_PACKET_HEADER));
+    remainderBegin += sizeof(FFXIVARR_PACKET_HEADER);
 
     if (packetHeader.unknown_0 != 16304822851840528978 && packetHeader.unknown_0 != 0) return true;
 
-    std::vector<uint8_t> payloadRemainder(payload.data() + sizeof(FFXIVARR_PACKET_HEADER), payload.data() + payload.size());
+    std::vector<uint8_t> payloadRemainder(remainderBegin, payload.data() + payload.size());
     if (packetHeader.isCompressed) {
         try {
             payloadRemainder = Decompress(payloadRemainder);
@@ -36,28 +38,27 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
             std::cout <<
             e.what() <<
             std::endl;
+            throw;
 #endif
             return true;
         }
     }
+    remainderBegin = payloadRemainder.data();
 
     FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader;
     memcpy(&segmentHeader, payloadRemainder.data(), sizeof(FFXIVARR_PACKET_SEGMENT_HEADER));
+    remainderBegin += sizeof(FFXIVARR_PACKET_SEGMENT_HEADER);
 
-    FFXIVARR_IPC_HEADER ipcHeader;
-    std::vector<uint8_t> remainderData;
+    FFXIVARR_IPC_HEADER* ipcHeader = nullptr;
     if (segmentHeader.type == FFXIVARR_SEGMENT_TYPE::SEGMENTTYPE_IPC) {
-        memcpy(&ipcHeader, payloadRemainder.data() + sizeof(FFXIVARR_PACKET_SEGMENT_HEADER), sizeof(FFXIVARR_IPC_HEADER));
-
-        remainderData = std::vector<uint8_t>(payloadRemainder.data() + sizeof(FFXIVARR_PACKET_SEGMENT_HEADER) + sizeof(FFXIVARR_IPC_HEADER),
-                                             payloadRemainder.data() + payloadRemainder.size());
-
-        callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, &ipcHeader, &remainderData);
-    } else {
-        remainderData = std::vector<uint8_t>(payloadRemainder.data() + sizeof(FFXIVARR_PACKET_SEGMENT_HEADER),
-                                             payloadRemainder.data() + payloadRemainder.size());
-        callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, nullptr, &remainderData);
+        ipcHeader = new FFXIVARR_IPC_HEADER();
+        memcpy(ipcHeader, remainderBegin, sizeof(FFXIVARR_IPC_HEADER));
+        remainderBegin += sizeof(FFXIVARR_IPC_HEADER);
     }
+
+    std::vector<uint8_t> remainderData(remainderBegin, payloadRemainder.data() + payloadRemainder.size());
+    callback(srcAddress, dstAddress, &packetHeader, &segmentHeader, ipcHeader, &remainderData);
+    delete ipcHeader;
 
     return true;
 }
