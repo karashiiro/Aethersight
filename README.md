@@ -54,4 +54,4 @@ Also remember to move the zlib DLL to the output directory.
 
 ## Roadmap
 - Interface tweaks to make it play nice with PInvoke
-- Packet sending
+- Packet sending (maybe)
