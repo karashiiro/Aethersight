@@ -8,6 +8,11 @@ using namespace Aethersight;
 using namespace Aethersight::Network;
 using namespace Tins;
 
+bool IsMagical(FFXIVARR_PACKET_HEADER header) {
+    return (header.unknown_0 == 16304822851840528978 && header.unknown_8 == 8486076352731294335)
+        || (header.unknown_0 == 0 && header.unknown_8 == 0);
+}
+
 AethersightSniffer::AethersightSniffer() : sniffer(nullptr), fileSniffer(nullptr) {}
 
 bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) {
@@ -27,7 +32,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     memcpy(&packetHeader, remainderBegin, PktHeadSize);
     remainderBegin += PktHeadSize;
 
-    if (packetHeader.unknown_0 != 16304822851840528978 && packetHeader.unknown_0 != 0) return true;
+    if (!IsMagical(packetHeader)) return true;
 
     std::vector<uint8_t> payloadRemainder(remainderBegin, payload.data() + payload.size());
     if (packetHeader.isCompressed) {
