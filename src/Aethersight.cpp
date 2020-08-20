@@ -4,10 +4,6 @@
 #include <pcap.h>
 #include "Decompress.h"
 
-#define PktHeadSize sizeof(FFXIVARR_PACKET_HEADER)
-#define SegHeadSize sizeof(FFXIVARR_PACKET_SEGMENT_HEADER)
-#define IpcHeadSize sizeof(FFXIVARR_IPC_HEADER)
-
 using namespace Aethersight;
 using namespace Aethersight::Network;
 using namespace Tins;
@@ -39,9 +35,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
             payloadRemainder = Decompress(payloadRemainder);
         } catch (const std::exception& e) {
 #if _DEBUG
-            std::cout <<
-            e.what() <<
-            std::endl;
+            std::cout << e.what() << std::endl;
 #endif
             return true;
         }
@@ -74,8 +68,10 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     return true;
 }
 
-void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string deviceName) {
+void AethersightSniffer::BeginSniffing(PacketCallback callback, const char* _deviceName) {
     if (this->sniffer) return;
+
+    std::string deviceName(_deviceName);
 
     SnifferConfiguration config;
     config.set_promisc_mode(true);
@@ -99,7 +95,7 @@ void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string devi
     });
 }
 
-void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
+void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, const char* fileName) {
     if (this->fileSniffer) return;
 
     this->fileSniffer = new FileSniffer(fileName, PACKET_FILTER);

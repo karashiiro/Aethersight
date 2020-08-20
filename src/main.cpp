@@ -71,9 +71,9 @@ int main(int argc, char *argv[]) {
         if (!device) {
             sniffer.BeginSniffing(OnPacket);
         } else {
-            sniffer.BeginSniffing(OnPacket, *device);
+            sniffer.BeginSniffing(OnPacket, device->c_str());
         }
     } else {
-        sniffer.BeginSniffingFromFile(OnPacket, *file);
+        sniffer.BeginSniffingFromFile(OnPacket, file->c_str());
     }
 }
