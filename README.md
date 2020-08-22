@@ -1,6 +1,9 @@
 # Aethersight
 A simple packet sniffer for FFXIV. Shouldn't require privilege escalation or a firewall exception on Windows.
 
+## .NET Port
+A Windows-only .NET port is available at [Aethersight.NET](https://github.com/karashiiro/Aethersight.NET).
+
 ## Executable Usage
 `aethersight [-f <filename>] [-d <network device name>]`
 
