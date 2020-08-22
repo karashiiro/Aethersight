@@ -15,13 +15,13 @@
 // Filter copied from Zanarkand
 #define PACKET_FILTER "tcp portrange 54992-54994 or tcp portrange 55006-55007 or tcp portrange 55021-55040 or tcp portrange 55296-55551"
 
-typedef void (__stdcall* PacketCallback)(
-        const char*,
-        const char*,
-        const Aethersight::Network::FFXIVARR_PACKET_HEADER*,
-        const Aethersight::Network::FFXIVARR_PACKET_SEGMENT_HEADER*,
-        const Aethersight::Network::FFXIVARR_IPC_HEADER*,
-        const std::vector<uint8_t>*
+typedef void PacketCallback(
+    std::string srcAddress,
+    std::string dstAddress,
+    const Aethersight::Network::FFXIVARR_PACKET_HEADER&,
+    const Aethersight::Network::FFXIVARR_PACKET_SEGMENT_HEADER&,
+    const Aethersight::Network::FFXIVARR_IPC_HEADER*,
+    const std::vector<uint8_t>& remainder
 );
 
 namespace Aethersight {
@@ -29,8 +29,8 @@ namespace Aethersight {
     public:
         AethersightSniffer();
 
-        void BeginSniffing(PacketCallback callback, const char* deviceName = "");
-        void BeginSniffingFromFile(PacketCallback callback, const char* fileName);
+        void BeginSniffing(PacketCallback callback, std::string deviceName = "");
+        void BeginSniffingFromFile(PacketCallback callback, std::string fileName);
         void EndSniffing();
         void EndSniffingFromFile();
     private:

@@ -47,8 +47,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     }
     remainderBegin = payloadRemainder.data();
 
-    // See CommonNetwork.h; several segments can be sent in one packet
-    for (int i = 0; i < packetHeader.count; i++) {
+    for (int i = 0; i < packetHeader.segmentCount; i++) {
         FFXIVARR_PACKET_SEGMENT_HEADER segmentHeader;
         memcpy(&segmentHeader, remainderBegin, SegHeadSize);
         remainderBegin += SegHeadSize;
@@ -64,7 +63,7 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
         }
 
         std::vector<uint8_t> remainderData(remainderBegin, remainderBegin + remainderSize);
-        callback(srcAddress.c_str(), dstAddress.c_str(), &packetHeader, &segmentHeader, ipcHeader, &remainderData);
+        callback(srcAddress, dstAddress, packetHeader, segmentHeader, ipcHeader, remainderData);
         delete ipcHeader;
 
         remainderBegin += remainderSize;
@@ -73,10 +72,8 @@ bool AethersightSniffer::Process(const Packet& packet, PacketCallback callback) 
     return true;
 }
 
-void AethersightSniffer::BeginSniffing(PacketCallback callback, const char* _deviceName) {
+void AethersightSniffer::BeginSniffing(PacketCallback callback, std::string deviceName) {
     if (this->sniffer) return;
-
-    std::string deviceName(_deviceName);
 
     SnifferConfiguration config;
     config.set_promisc_mode(true);
@@ -100,7 +97,7 @@ void AethersightSniffer::BeginSniffing(PacketCallback callback, const char* _dev
     });
 }
 
-void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, const char* fileName) {
+void AethersightSniffer::BeginSniffingFromFile(PacketCallback callback, std::string fileName) {
     if (this->fileSniffer) return;
 
     this->fileSniffer = new FileSniffer(fileName, PACKET_FILTER);

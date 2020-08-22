@@ -58,7 +58,7 @@ namespace Aethersight::Network {
         /** The type of this connection - 1 zone, 2 chat*/
         uint16_t connectionType;
         /** The number of packet segments that follow. */
-        uint16_t count;
+        uint16_t segmentCount;
         uint8_t unknown_20;
         uint8_t isCompressed;
         uint32_t unknown_24;
